@@ -2,6 +2,8 @@ mod auth_models;
 use auth_models::{LoginRequest, LoginResponse, RegisterRequest};
 use super::common_models::Claims;
 
+use crate::auth::admin::AdminUser;
+
 use actix_web::error::ErrorUnauthorized;
 use actix_web::{web, Error, HttpResponse};
 use actix_web::post;
@@ -13,7 +15,8 @@ use sqlx::sqlite::SqlitePool;
 #[post("/register")]
 pub async fn register(
     pool: web::Data<SqlitePool>,
-    register_data: web::Json<RegisterRequest>
+    register_data: web::Json<RegisterRequest>,
+    _admin_user: AdminUser
 ) -> Result<HttpResponse, Error> {
     let hashed_password = hash(&register_data.password, DEFAULT_COST).unwrap();
     
@@ -49,7 +52,7 @@ pub async fn login(
     match user_result{
             Ok(user_record) => {
 
-                if verify(&login_data.password, &user_record.password.unwrap()).unwrap(){
+                if verify(&login_data.password, &user_record.password).unwrap(){
                     let expiration = chrono::Utc::now()
                                     .checked_add_days(chrono::Days::new(1))
                                     .expect("valid timestamp")

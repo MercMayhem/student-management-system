@@ -2,7 +2,9 @@ mod auth;
 mod routes;
 
 use actix_web::{web, App, HttpServer};
+use routes::admin::admin_update_details::admin_update_student_details;
 use sqlx::sqlite::SqlitePool;
+use crate::routes::user::update_details::update_student_details;
 
 use auth::authentication::{login, register};
 
@@ -16,6 +18,8 @@ async fn main() -> std::io::Result<()>{
             .app_data(web::Data::new(pool.clone()))
             .service(register)
             .service(login)
+            .service(update_student_details)
+            .service(admin_update_student_details)
     })
     .bind("127.0.0.1:8080")?
     .run()

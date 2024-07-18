@@ -11,15 +11,19 @@ use serde::{Deserialize, Serialize};
 use serde_json::json;
 use sqlx::sqlite::SqlitePool;
 
-#[derive(Debug, Deserialize, Serialize)]
-pub struct AdminUser{
+#[derive(Debug, Serialize, Deserialize)]
+pub struct User{
     pub username: String,
     pub password: String,
     pub email: String,
-    pub is_admin: bool
+    pub firstname: Option<String>,
+    pub lastname: Option<String>,
+    pub phone_no: Option<String>,
+    pub is_admin: Option<bool>,
+    pub roll_no: Option<String>
 }
 
-impl FromRequest for AdminUser {
+impl FromRequest for User {
     type Future = Pin<Box<dyn Future<Output = Result<Self, Self::Error>>>>;
     type Error = Error;
 
@@ -33,7 +37,7 @@ impl FromRequest for AdminUser {
 
         // 2. Check if authorization is of "Bearer" type
 
-        let auth_header = auth_header_option.unwrap().to_str().unwrap_or("");
+let auth_header = auth_header_option.unwrap().to_str().unwrap_or("");
         if !auth_header.starts_with("Bearer "){
             return Box::pin(ready(Err(ErrorUnauthorized(json!({"error" : "Invalid Authorization Scheme"})))))
         }
@@ -56,8 +60,7 @@ impl FromRequest for AdminUser {
 
         let claims = claims_result.unwrap();
 
-        // 4. Check if user token is not expired and user is an admin
-
+        // 4. Check if user token is expired or not
         let pool = req.app_data::<web::Data<SqlitePool>>().unwrap().clone();
         Box::pin(async move {
 
@@ -74,17 +77,24 @@ impl FromRequest for AdminUser {
 
             let user = user_record.unwrap();
 
-            if user.is_admin.is_none() || user.is_admin == Some(0){
-                return Err(ErrorUnauthorized(json!({"error" : "User not authorized to use this resource"})))
+            let admin: Option<bool>;
+            if user.is_admin.is_none(){
+                admin = None
+            } else if user.is_admin == Some(1){
+                admin = Some(true)
+            } else {
+                admin = Some(false)
             }
 
-            return Ok(AdminUser {
+            return Ok(User { 
                 username: (user.username), 
                 password: (user.password), 
                 email: (user.email), 
-                is_admin: true 
-            })
+                firstname: (user.firstname), 
+                lastname: (user.lastname), 
+                phone_no: (user.phone_number), 
+                is_admin: (admin), 
+                roll_no: (user.roll_no) });
         })
-        
     }
 }
