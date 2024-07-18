@@ -1,6 +1,6 @@
 use actix_web::web;
 use sqlx::{sqlite::SqliteQueryResult, SqlitePool};
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Deserialize)]
 pub struct UpdateFields{
@@ -8,6 +8,22 @@ pub struct UpdateFields{
     firstname : Option<String>,
     lastname : Option<String>,
     phone_number : Option<String>
+}
+
+#[derive(Debug, Serialize)]
+pub struct DetailsFields{
+    pub email: String,
+    pub username: String,
+    pub firstname : Option<String>,
+    pub lastname : Option<String>,
+    pub phone_number : Option<String>,
+    pub roll_no: Option<String>
+}
+
+#[derive(Debug, Deserialize)]
+pub struct DetailsQuery{
+    pub page: Option<i64>,
+    pub num: Option<i64>,
 }
 
 pub async fn update_from_email(pool: web::Data<SqlitePool>, fields: web::Json<UpdateFields>, user_email: &String) -> sqlx::Result<SqliteQueryResult>{

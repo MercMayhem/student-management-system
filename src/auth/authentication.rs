@@ -21,11 +21,12 @@ pub async fn register(
     let hashed_password = hash(&register_data.password, DEFAULT_COST).unwrap();
     
     let result = sqlx::query!(
-        "INSERT INTO users (username, email, password, is_admin) VALUES (?, ?, ?, ?)",
+        "INSERT INTO users (username, email, password, is_admin, roll_no) VALUES (?, ?, ?, ?, ?)",
         register_data.username,
         register_data.email,
         hashed_password,
-        0
+        0,
+        register_data.roll_no
     )
     .execute(pool.get_ref())
     .await;

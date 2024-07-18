@@ -16,4 +16,5 @@ pub struct RegisterRequest{
     pub username: String,
     pub password: String,
     pub email: String,
+    pub roll_no: String
 }
