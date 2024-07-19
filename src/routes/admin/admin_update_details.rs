@@ -1,12 +1,12 @@
 
-use actix_web::{post, web, HttpResponse, Responder};
+use actix_web::{patch, web, HttpResponse, Responder};
 use sqlx::SqlitePool;
 
 use crate::auth::admin::AdminUser;
 use super::super::utils::{update_from_id, UpdateFields};
 
 
-#[post("/update/{user_id}")]
+#[patch("/admin/update/{user_id}")]
 async fn admin_update_student_details(pool: web::Data<SqlitePool>, fields: web::Json<UpdateFields>, _user: AdminUser, user_id: web::Path<i64>) -> impl Responder {
     let query_result = update_from_id(pool, fields, *user_id.as_ref()).await;
     match query_result {
