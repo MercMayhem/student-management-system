@@ -38,6 +38,19 @@ pub struct ApplicationsResponse{
     pub status: String
 }
 
+#[derive(Debug, Deserialize)]
+pub enum Status{
+    Denied,
+    Approved,
+    Pending
+}
+
+#[derive(Debug, Deserialize)]
+pub struct ApplicationStatusUpdate{
+    pub application_id: i64,
+    pub status: Status
+}
+
 #[derive(Debug, Serialize)]
 pub struct AdminApplicationsResponse{
     pub id: i64,

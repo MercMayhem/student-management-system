@@ -2,7 +2,7 @@ mod auth;
 mod routes;
 
 use actix_web::{web, App, HttpServer};
-use routes::{admin::{admin_get_application_details::admin_get_applications, admin_get_details::admin_get_details, admin_update_details::admin_update_student_details}, user::{apply_application::apply, get_application_details::get_applications, get_details::get_details}};
+use routes::{admin::{admin_get_application_details::admin_get_applications, admin_get_details::admin_get_details, admin_post_status::update_application_status, admin_update_details::admin_update_student_details}, user::{apply_application::apply, get_application_details::get_applications, get_details::get_details}};
 use sqlx::sqlite::SqlitePool;
 use crate::routes::user::update_details::update_student_details;
 
@@ -25,6 +25,7 @@ async fn main() -> std::io::Result<()>{
             .service(apply)
             .service(get_applications)
             .service(admin_get_applications)
+            .service(update_application_status) 
     })
     .bind("127.0.0.1:8080")?
     .run()
