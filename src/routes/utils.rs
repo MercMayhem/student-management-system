@@ -26,6 +26,29 @@ pub struct DetailsQuery{
     pub num: Option<i64>,
 }
 
+#[derive(Debug, Deserialize)]
+pub struct Application{
+    pub content: String
+}
+
+#[derive(Debug, Serialize)]
+pub struct ApplicationsResponse{
+    pub username: String,
+    pub content: String,
+    pub status: String
+}
+
+#[derive(Debug, Serialize)]
+pub struct AdminApplicationsResponse{
+    pub id: i64,
+    pub username: String,
+    pub email: String,
+    pub phone_number: Option<String>,
+    pub roll_no: Option<String>,
+    pub content: String,
+    pub status: String
+}
+
 pub async fn update_from_email(pool: web::Data<SqlitePool>, fields: web::Json<UpdateFields>, user_email: &String) -> sqlx::Result<SqliteQueryResult>{
     sqlx::query!(
         "update users set username = ?, firstname = ?, lastname = ?, phone_number = ? where email = ?;",
