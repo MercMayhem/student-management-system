@@ -1,4 +1,4 @@
-mod auth_models;
+pub mod auth_models;
 use auth_models::{LoginRequest, LoginResponse, RegisterRequest};
 use super::common_models::Claims;
 
@@ -12,6 +12,14 @@ use jsonwebtoken::{encode, EncodingKey};
 use serde_json::json;
 use sqlx::sqlite::SqlitePool;
 
+#[utoipa::path(
+    request_body = RegisterRequest,
+    responses(
+        (status=200, description="Registered new user"),
+        (status=500, description="Failed to register new user")
+    ),
+    tag = "Authentication"
+)]
 #[post("/register")]
 pub async fn register(
     pool: web::Data<SqlitePool>,
@@ -37,6 +45,15 @@ pub async fn register(
     }
 }
 
+#[utoipa::path(
+    request_body = LoginRequest,
+    responses(
+        (status=200, description="User successfully logged in and return JWT token", body=LoginResponse),
+        (status=401, description="Invalid user credentials")
+    ),
+    tag = "Authentication"
+
+)]
 #[post("/login")]
 pub async fn login(
     pool: web::Data<SqlitePool>,

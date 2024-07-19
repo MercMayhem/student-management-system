@@ -3,6 +3,19 @@ use sqlx::SqlitePool;
 
 use crate::{auth::admin::AdminUser, routes::utils::{DetailsFields, DetailsQuery}};
 
+#[utoipa::path(
+    request_body = DetailsQuery,
+    responses(
+        (status=200, description="Get student details", body=DetailsFields),
+        (status=500, description="Error getting details")
+    ),
+    security(
+        ("bearer_auth" = [])
+    ),
+    tag = "Admin"
+
+
+)]
 #[get("/admin/details")]
 async fn admin_get_details(path: web::Path<DetailsQuery>, pool: web::Data<SqlitePool>, _admin: AdminUser) -> impl Responder{
     let page: i64;
@@ -20,7 +33,7 @@ async fn admin_get_details(path: web::Path<DetailsQuery>, pool: web::Data<Sqlite
     let mut ret: Vec<DetailsFields> = Vec::new();
     let start = num * page;
     let query_result = sqlx::query!(
-            "SELECT * FROM users LIMIT ?, ?",
+            "SELECT * FROM users WHERE is_admin = 0 LIMIT ?, ?",
             start,
             num
         ).fetch_all(pool.as_ref())

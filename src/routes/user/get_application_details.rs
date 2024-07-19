@@ -3,6 +3,18 @@ use sqlx::{query_as, SqlitePool};
 
 use crate::{auth::user::User, routes::utils::ApplicationsResponse};
 
+#[utoipa::path(
+    responses(
+        (status=200, description="Got logged in user application details"),
+        (status=500, description="Error getting application")
+    ),
+    security(
+        ("bearer_auth" = [])
+    ),
+    tag = "Student"
+
+
+)]
 #[get("/applications")]
 pub async fn get_applications(user: User, pool: web::Data<SqlitePool>) -> HttpResponse{
     let id_option: Option<(i64, )> = query_as(

@@ -3,6 +3,18 @@ use sqlx::{query, SqlitePool};
 
 use crate::{auth::admin::AdminUser, routes::utils::{AdminApplicationsResponse, DetailsQuery}};
 
+#[utoipa::path(
+    request_body = DetailsQuery,
+    responses(
+        (status=200, description="Get student applications", body=AdminApplicationsResponse),
+        (status=500, description="Error getting applications")
+    ),
+    security(
+        ("bearer_auth" = [])
+    ),
+    tag = "Admin"
+
+)]
 #[get("/admin/studentapplications")]
 pub async fn admin_get_applications(_admin: AdminUser, pool: web::Data<SqlitePool>, details: web::Query<DetailsQuery>) -> HttpResponse{
     let page = details.page.unwrap_or(1) - 1;

@@ -3,6 +3,19 @@ use sqlx::{query, SqlitePool};
 
 use crate::{auth::admin::AdminUser, routes::utils::ApplicationStatusUpdate};
 
+#[utoipa::path(
+    request_body = ApplicationStatusUpdate,
+    responses(
+        (status=200, description="Updated application status"),
+        (status=500, description="Error updating application status")
+    ),
+    security(
+        ("bearer_auth" = [])
+    ),
+    tag = "Admin"
+
+
+)]
 #[post("/admin/update/applicationstatus")]
 pub async fn update_application_status(_admin: AdminUser, pool: web::Data<SqlitePool>, update: web::Json<ApplicationStatusUpdate>) -> HttpResponse {
     let status = {
