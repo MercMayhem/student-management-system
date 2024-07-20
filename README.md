@@ -12,6 +12,7 @@ git clone https://github.com/MercMayhem/student-management-system.git
 cd student-management-system
 cargo run
 ```
+4. API is now running on `localhost:8080`
 
 ## Documentation
 
